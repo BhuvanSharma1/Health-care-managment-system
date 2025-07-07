@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book Appointment | Healthcare System</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <main class="main-content">
+    <div class="dashboard-header">
+      <h2>Book Appointment</h2>
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </div>
+
+    <form onsubmit="bookAppointment(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="doctor-select">Doctor</label>
+          <select id="doctor-select" required>
+            <option value="">Select a doctor</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="illness-select">Illness</label>
+          <select id="illness-select" required>
+            <option value="">Select an illness</option>
+            <option>Fever</option>
+            <option>Hypertension</option>
+            <option>Diabetes</option>
+            <option>Asthma</option>
+            <option>Cold & Cough</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" required>
+            <option value="">Select gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" min="1" max="120" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="blood-group">Blood Group</label>
+          <select id="blood-group" required>
+            <option value="">Select blood group</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option>
+            <option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="appointment-date">Date</label>
+          <input type="date" id="appointment-date" required />
+        </div>
+
+        <div class="form-group">
+          <label for="appointment-time">Time</label>
+          <input type="time" id="appointment-time" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="more-details">More Details</label>
+        <textarea id="more-details" rows="5" placeholder="Describe symptoms, concerns..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Book Appointment</button>
+    </form>
+  </main>
+
+  <script>
+    const username = localStorage.getItem("loggedInUser") || "User";
+
+    function logoutUser() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+
+    // Populate doctor list
+    const doctors = ["Dr. Meera Sharma", "Dr. Rajiv Menon", "Dr. Anita Das", "Dr. Sanjay Patel"];
+    const doctorSelect = document.getElementById("doctor-select");
+    doctors.forEach(doc => {
+      const option = document.createElement("option");
+      option.value = doc;
+      option.textContent = doc;
+      doctorSelect.appendChild(option);
+    });
+
+    // Set today's date as minimum
+    const dateInput = document.getElementById("appointment-date");
+    const today = new Date().toISOString().split("T")[0];
+    dateInput.setAttribute("min", today);
+
+    function bookAppointment(event) {
+      event.preventDefault();
+
+      const selectedDate = document.getElementById("appointment-date").value;
+      const selectedTime = document.getElementById("appointment-time").value;
+      const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+      const now = new Date();
+
+      if (selectedDateTime < now) {
+        alert("Please select a future date and time.");
+        return;
+      }
+
+      const appointment = {
+        patient: username,
+        doctor: document.getElementById("doctor-select").value,
+        illness: document.getElementById("illness-select").value,
+        gender: document.getElementById("gender").value,
+        age: document.getElementById("age").value,
+        bloodGroup: document.getElementById("blood-group").value,
+        date: selectedDate,
+        time: selectedTime,
+        details: document.getElementById("more-details").value
+      };
+
+      localStorage.setItem("appointmentBooked", JSON.stringify(appointment));
+      alert("Appointment details saved. Redirecting to payment...");
+      window.location.href = "payment.html"; // Redirect to payment
+    }
+  </script>
+</body>
+</html>

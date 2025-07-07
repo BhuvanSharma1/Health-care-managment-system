@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment | Healthcare System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="payment.css" />
+</head>
+<body>
+  <div class="payment-container">
+    <h2>Payment Page</h2>
+
+    <!-- Appointment Info -->
+    <div class="appointment-details" id="appointment-details">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <!-- Flex layout: QR & Card side by side -->
+    <div class="payment-methods">
+      <!-- QR Code Column -->
+      <div class="qr-section">
+        <h3>Scan & Pay via UPI</h3>
+        <img src="images/qr.jpg" alt="UPI QR Code" class="qr-image" />
+        <p><strong>UPI ID:</strong> yourname@upi</p>
+      </div>
+
+      <!-- Card Payment Form Column -->
+      <form class="card-form" onsubmit="processPayment(event)">
+        <h3>Pay via Card</h3>
+
+        <div class="form-group">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required />
+        </div>
+
+        <div class="form-group">
+          <label for="expiry">Expiry Date</label>
+          <input type="month" id="expiry" required />
+        </div>
+
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="password" id="cvv" maxlength="4" required />
+        </div>
+
+        <button type="submit" class="pay-btn">Pay ₹500</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const appointment = JSON.parse(localStorage.getItem("appointmentBooked"));
+    const username = localStorage.getItem("loggedInUser") || "User";
+    const detailsDiv = document.getElementById("appointment-details");
+
+    if (appointment) {
+      detailsDiv.innerHTML = `
+        <h3>Appointment Details</h3>
+        <p><strong>Patient:</strong> ${appointment.patient}</p>
+        <p><strong>Doctor:</strong> ${appointment.doctor}</p>
+        <p><strong>Illness:</strong> ${appointment.illness}</p>
+        <p><strong>Date:</strong> ${appointment.date}</p>
+        <p><strong>Time:</strong> ${appointment.time}</p>
+        <p><strong>Fee:</strong> ₹500</p>
+      `;
+    } else {
+      detailsDiv.innerHTML = "<p>No appointment data found.</p>";
+    }
+
+    function processPayment(event) {
+      event.preventDefault();
+
+      const payment = {
+        username: username,
+        doctor: appointment?.doctor || "Unknown",
+        illness: appointment?.illness || "N/A",
+        date: appointment?.date || "",
+        time: appointment?.time || "",
+        amount: 500,
+        paidOn: new Date().toLocaleString()
+      };
+
+      const history = JSON.parse(localStorage.getItem("paymentHistory")) || [];
+      history.push(payment);
+      localStorage.setItem("paymentHistory", JSON.stringify(history));
+
+      alert("Payment successful!");
+      localStorage.removeItem("appointmentBooked");
+      window.location.href = "patient-dashboard.html";
+    }
+  </script>
+</body>
+</html>

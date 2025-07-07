@@ -1,0 +1,143 @@
+<!-- doctor-dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="doctor-dashboard">
+    <header>
+      <h1>Doctor Dashboard</h1>
+      <span class="date">Today's Date: <span id="todayDate"></span></span>
+    </header>
+
+    <div class="dashboard-grid">
+      <!-- Overview Section -->
+      <div class="overview">
+        <div class="overview-card">
+          <h2>Appointments</h2>
+          <p id="totalAppointments">0</p>
+        </div>
+        <div class="overview-card">
+          <h2>New Patients</h2>
+          <p id="newPatients">0</p>
+        </div>
+        <div class="overview-card full-width">
+          <h2>Upcoming Appointments</h2>
+          <p id="upcomingAppointments">0</p>
+        </div>
+      </div>
+
+      <!-- Patient List -->
+      <div class="patients-list">
+        <h3>Patients</h3>
+        <ul id="patientList"></ul>
+      </div>
+
+      <!-- Patient Details -->
+      <div class="patient-details">
+        <div class="card">
+          <h2 id="patientName">Select a Patient</h2>
+          <p><strong>Age:</strong> <span id="patientAge">-</span></p>
+          <p><strong>Gender:</strong> <span id="patientGender">-</span></p>
+          <p><strong>Blood Type:</strong> <span id="patientBlood">-</span></p>
+          <p><strong>Date:</strong> <span id="patientDate">-</span></p>
+          <p><strong>Time:</strong> <span id="patientTime">-</span></p>
+        </div>
+
+        <div class="card">
+          <h3>Illness</h3>
+          <ul>
+            <li id="patientIllness">-</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>More Details</h3>
+          <p id="moreDetails">-</p>
+        </div>
+
+        <div class="card">
+          <h3>Prescriptions</h3>
+          <ul id="prescriptionList"></ul>
+          <input type="text" id="prescriptionInput" placeholder="Add prescription" />
+          <button onclick="addPrescription()">Add</button>
+        </div>
+      </div>
+
+      <!-- Medical Chart -->
+      <div class="vitals">
+        <div class="card">
+          <h3>Medical Chart</h3>
+          <ul class="schedule" id="appointmentChart"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+    const patientList = document.getElementById("patientList");
+    let selectedPatientIndex = null;
+
+    document.getElementById("totalAppointments").textContent = appointments.length;
+    document.getElementById("newPatients").textContent = appointments.length;
+    document.getElementById("upcomingAppointments").textContent = appointments.length;
+    document.getElementById("todayDate").textContent = new Date().toLocaleDateString();
+
+    function renderPatients() {
+      patientList.innerHTML = "";
+      const chart = document.getElementById("appointmentChart");
+      chart.innerHTML = "";
+
+      appointments.forEach((app, index) => {
+        const li = document.createElement("li");
+        li.textContent = app.patient;
+        li.onclick = () => loadPatient(index);
+        patientList.appendChild(li);
+
+        const chartItem = document.createElement("li");
+        chartItem.textContent = `${app.time} – ${app.patient}`;
+        chart.appendChild(chartItem);
+      });
+    }
+
+    function loadPatient(index) {
+      selectedPatientIndex = index;
+      const app = appointments[index];
+
+      document.getElementById("patientName").textContent = app.patient;
+      document.getElementById("patientAge").textContent = app.age;
+      document.getElementById("patientGender").textContent = app.gender;
+      document.getElementById("patientBlood").textContent = app.bloodGroup;
+      document.getElementById("patientDate").textContent = app.date;
+      document.getElementById("patientTime").textContent = app.time;
+      document.getElementById("patientIllness").textContent = app.illness;
+      document.getElementById("moreDetails").textContent = app.details;
+
+      const prescriptionList = document.getElementById("prescriptionList");
+      prescriptionList.innerHTML = "";
+      app.prescriptions.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p;
+        prescriptionList.appendChild(li);
+      });
+    }
+
+    function addPrescription() {
+      const input = document.getElementById("prescriptionInput");
+      const value = input.value.trim();
+      if (!value || selectedPatientIndex === null) return;
+
+      appointments[selectedPatientIndex].prescriptions.push(value);
+      localStorage.setItem("appointments", JSON.stringify(appointments));
+      loadPatient(selectedPatientIndex);
+      input.value = "";
+    }
+
+    renderPatients();
+  </script>
+</body>
+</html>

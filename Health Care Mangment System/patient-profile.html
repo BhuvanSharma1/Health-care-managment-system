@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Profile | Healthcare System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/logo.png" alt="Logo" class="sidebar-logo" />
+        <h2>HEALTH CARE</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="patient-dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="my-appointments.html"><i class="fas fa-calendar-check"></i> My Appointments</a>
+        <a href="patient-prescriptions.html"><i class="fas fa-pills"></i> My Prescriptions</a>
+        <a href="billing-history.html"><i class="fas fa-dollar-sign"></i> Billing History</a>
+        <a href="#" class="active"><i class="fas fa-user"></i> Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <span class="user-name">Patient</span>
+        <button class="logout-btn" onclick="logoutUser()">Logout</button>
+      </header>
+
+      <h2>My Profile</h2>
+      <form id="profile-form" onsubmit="saveProfile(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" disabled />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" required />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="phone" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" id="address" required />
+          </div>
+          <div class="form-group">
+            <label>Blood Group</label>
+            <select id="blood-group" required>
+              <option value="">Select</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="age" required />
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="gender" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="dob" required />
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit">Update Profile</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const user = localStorage.getItem("loggedInUser") || "User";
+    document.querySelectorAll(".user-name").forEach(el => {
+      el.textContent = user;
+    });
+
+    function logoutUser() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+
+      const profile = {
+        username: user,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        bloodGroup: document.getElementById("blood-group").value,
+        age: document.getElementById("age").value,
+        gender: document.getElementById("gender").value,
+        dob: document.getElementById("dob").value
+      };
+
+      localStorage.setItem("patientProfile", JSON.stringify(profile));
+      alert("Profile updated successfully!");
+    }
+
+    function loadProfile() {
+      const profile = JSON.parse(localStorage.getItem("patientProfile"));
+      if (profile) {
+        document.getElementById("username").value = profile.username || user;
+        document.getElementById("email").value = profile.email || "";
+        document.getElementById("phone").value = profile.phone || "";
+        document.getElementById("address").value = profile.address || "";
+        document.getElementById("blood-group").value = profile.bloodGroup || "";
+        document.getElementById("age").value = profile.age || "";
+        document.getElementById("gender").value = profile.gender || "";
+        document.getElementById("dob").value = profile.dob || "";
+      } else {
+        document.getElementById("username").value = user;
+      }
+    }
+
+    window.onload = loadProfile;
+  </script>
+</body>
+</html>

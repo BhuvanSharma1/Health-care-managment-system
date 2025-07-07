@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Dashboard | Healthcare System</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/logo.png" alt="Logo" class="sidebar-logo" />
+        <h2>HEALTH CARE</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="my-appointments.html"><i class="fas fa-calendar-check"></i> My Appointments</a>
+        <a href="patient-prescriptions.html"><i class="fas fa-pills"></i> My Prescriptions</a>
+        <a href="billing-history.html"><i class="fas fa-dollar-sign"></i> Billing History</a>
+        <a href="patient-profile.html"><i class="fas fa-user"></i> Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <span class="user-name"></span>
+        <button class="logout-btn" onclick="logoutUser()">Logout</button>
+      </header>
+
+      <!-- Welcome + Summary -->
+      <section class="welcome">
+        <h1>Welcome, <span class="user-name"></span></h1>
+
+        <div class="summary-cards">
+          <div class="card highlight">
+            <p class="title">Upcoming Appointment</p>
+            <p id="appointment-info" class="gray-text">No upcoming appointments.</p>
+          </div>
+          <div class="card">
+            <p class="title">Your Status</p>
+            <div id="status-display" class="status-box">No status available.</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="dashboard-description">
+          <h3>This is your Dashboard – your personal space to manage all your healthcare needs in one place.</h3>
+        </br>
+          <ul>
+            <li><strong>📅 View & Manage Appointments:</strong> See your upcoming and past doctor visits, and book new appointments easily.</li>
+          </ul>
+        </br>
+          <p>You’re just a few clicks away from managing your healthcare more efficiently and securely. If you need help, feel free to contact our support team anytime.</p>
+        </div>
+      </br>
+
+        <button class="btn-primary" onclick="window.location.href='book-appointment.html'">Book Appointment</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const username = localStorage.getItem("loggedInUser") || "User";
+    document.querySelectorAll(".user-name").forEach(el => {
+      el.textContent = username;
+    });
+
+    function logoutUser() {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+
+    const appointment = JSON.parse(localStorage.getItem("appointmentBooked"));
+    if (appointment) {
+      document.getElementById("appointment-info").innerHTML =
+        `${appointment.date}<br>${appointment.time}`;
+    }
+
+    const statusDisplay = document.getElementById("status-display");
+    const savedStatus = localStorage.getItem("patientStatus");
+    statusDisplay.textContent = savedStatus || "No status available.";
+  </script>
+</body>
+</html>
